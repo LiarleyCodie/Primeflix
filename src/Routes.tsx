@@ -1,8 +1,8 @@
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from 'react-router-dom'
 
-import { Home } from "./pages/Home";
-import { Movie } from "./pages/Movie";
-import { Navbar } from "./components/Navbar";
+import { Home } from './pages/Home'
+import { Movie } from './pages/Movie'
+import { Navbar } from './components/Navbar'
 
 export function Router() {
   return (
@@ -13,5 +13,5 @@ export function Router() {
         <Route path="/movie/:movieID" element={<Movie />} />
       </Routes>
     </BrowserRouter>
-  );
+  )
 }

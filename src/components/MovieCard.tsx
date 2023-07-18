@@ -1,12 +1,13 @@
-import { BookOpenText } from "@phosphor-icons/react";
-import { Link } from "react-router-dom";
-import styled from "styled-components";
+import { BookOpenText } from '@phosphor-icons/react'
+import { Link } from 'react-router-dom'
+import styled from 'styled-components'
 
 interface IMovieCardProps {
-  title: string;
-  imageUrl: string;
-  imageAlt: string;
-  readMoreLinkID: number;
+  title: string
+  description: string
+  imageUrl: string
+  imageAlt: string
+  readMoreLinkID: number
 }
 
 const StyledArticle = styled.article`
@@ -18,7 +19,7 @@ const StyledArticle = styled.article`
 
   box-shadow: 0 1rem 2rem -1rem transparent;
 
-  transition-property: transform, box-shadow;
+  transition-property: transform, box-shadow, filter;
   transition-duration: 100ms;
 
   img {
@@ -35,6 +36,7 @@ const StyledArticle = styled.article`
     z-index: 100;
     transform: scale(1.05);
     box-shadow: 0 1rem 2rem -0.5rem rgba(0, 0, 0, 1);
+    filter: grayscale(50%);
   }
 
   &:hover .movie-infos,
@@ -56,17 +58,22 @@ const StyledArticle = styled.article`
     justify-content: end;
     position: absolute;
     color: #e1e1e1;
-    background: linear-gradient(to bottom, transparent, #121214 90%);
+    background: linear-gradient(to bottom, transparent, #121214 85%);
     width: 100%;
-    height: 50%;
+    height: 80%;
     left: 0;
     bottom: 0;
 
     strong {
-      padding: 1.2rem;
+      padding: 0 1.2rem 0.8rem;
       font-size: 2rem;
       font-weight: 700;
       letter-spacing: 0.2rem;
+    }
+
+    p {
+      padding-inline: 1.2rem;
+      text-align: justify;
     }
 
     a {
@@ -90,14 +97,14 @@ const StyledArticle = styled.article`
       }
     }
   }
-`;
+`
 
 export function MovieCard(props: IMovieCardProps) {
   return (
     <StyledArticle tabIndex={0}>
       <div className="movie-infos">
         <strong>{props.title}</strong>
-
+        <p>{props.description}</p>
         <Link to={`/movie/${props.readMoreLinkID}`}>
           <BookOpenText />
           <span>Read more...</span>
@@ -105,10 +112,10 @@ export function MovieCard(props: IMovieCardProps) {
       </div>
       <img
         loading="lazy"
-        src={`https://image.tmdb.org/t/p/original/${props.imageUrl}`}
+        src={`https://image.tmdb.org/t/p/w300${props.imageUrl}`}
         alt={props.imageAlt}
         draggable={false}
       />
     </StyledArticle>
-  );
+  )
 }

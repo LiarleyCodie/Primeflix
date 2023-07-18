@@ -1,5 +1,5 @@
-import styled from "styled-components";
-import { NavLink, Link } from "react-router-dom";
+import styled from 'styled-components'
+import { NavLink, Link } from 'react-router-dom'
 
 const StyledNavbar = styled.nav`
   display: flex;
@@ -34,7 +34,7 @@ const StyledNavbar = styled.nav`
       overflow: hidden;
 
       &::after {
-        content: "";
+        content: '';
         width: 100%;
         height: 0.4rem;
         background: #e1e1e1;
@@ -42,7 +42,9 @@ const StyledNavbar = styled.nav`
         left: 0;
         bottom: 0;
         opacity: 0;
-        transition: opacity 100ms, transform 300ms;
+        transition:
+          opacity 100ms,
+          transform 300ms;
         transform: translateX(100%);
       }
 
@@ -56,7 +58,7 @@ const StyledNavbar = styled.nav`
       }
     }
   }
-`;
+`
 
 export function Navbar() {
   return (
@@ -66,5 +68,5 @@ export function Navbar() {
       </Link>
       <NavLink to="/bookmarks">My Movies</NavLink>
     </StyledNavbar>
-  );
+  )
 }
