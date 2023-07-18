@@ -22,3 +22,7 @@ textarea {
   font-size: inherit;
   color: inherit;
 }
+
+img {
+  width: 100%;
+}
