@@ -14,6 +14,7 @@ import {
   Tag,
   Warning,
 } from '@phosphor-icons/react'
+import { VideoPlayer } from '../components/VideoPlayer'
 
 const StyledHeader = styled.header`
   height: 33.2rem;
@@ -111,11 +112,6 @@ const StyledSection = styled.section`
         font-size: 2.4rem;
         line-height: 1.8;
       }
-
-      .video {
-        background: #d3d3d3;
-        height: 44.8rem;
-      }
     }
 
     .right {
@@ -175,11 +171,6 @@ const StyledSection = styled.section`
             }
           }
         }
-
-        .video {
-          background: #d3d3d3;
-          height: 24.4rem;
-        }
       }
     }
   }
@@ -195,14 +186,13 @@ const StyledReleasedTag = styled.section<{ $released?: boolean }>`
   gap: 0.4rem;
   color: ${(props) => (props.$released ? '#121214' : '#e1e1e1')};
 `
-const StyledRestrictionAge = styled(StyledReleasedTag)<{
-  $adultOnly?: boolean
-}>`
+// prettier-ignore
+const StyledRestrictionAge = styled(StyledReleasedTag)<{  $adultOnly?: boolean }>`
   background: ${(props) => (props.$adultOnly ? '#ffbb00' : '#1DB954')};
   color: #121214;
 `
 
-interface IMovie {
+interface IMovieData {
   adult: boolean
   backdrop_path: string
   genres: Array<{ id: number; name: string }>
@@ -215,32 +205,74 @@ interface IMovie {
   release_date: string
   status: string
 }
+interface IMovieTrailer {
+  name: string
+  key: string
+  site: string
+  id: string
+}
+
+// https://www.youtube.com/watch?v={movieTrailer.key}
+
 export function Movie() {
   const { movieID } = useParams()
-  const [movie, setMovie] = useState<IMovie>({})
+  const [movieData, setMovieData] = useState<IMovieData>({
+    adult: false,
+    backdrop_path: '',
+    genres: [{ id: 0, name: '' }],
+    homepage: '',
+    id: 0,
+    original_title: '',
+    overview: '',
+    poster_path: '',
+    production_companies: [{ id: 0, name: '' }],
+    release_date: '',
+    status: '',
+  })
+  const [movieTrailer, setMovieTrailer] = useState<IMovieTrailer[]>([
+    {
+      id: '',
+      key: '',
+      site: '',
+      name: '',
+    },
+  ])
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    async function loadMovie() {
+    async function loadMovieData() {
       await API.get(`/movie/${movieID}`, {
         params: {
           api_key: API_KEY,
         },
       })
         .then((response) => {
-          setMovie(response.data)
+          setMovieData(response.data)
         })
-        .catch(() => {
-          console.log('Movie not founded bitch')
+        .catch((err) => {
+          console.log('[Movie data was not found]')
+          console.error(err)
         })
     }
 
-    loadMovie()
+    async function loadMovieTrailer() {
+      await API.get(`/movie/${movieID}/videos`, {
+        params: {
+          api_key: API_KEY,
+        },
+      })
+        .then((response) => {
+          setMovieTrailer(response.data.results)
+        })
+        .catch((err) => {
+          console.log('[Movie trailer data was not found]')
+          console.error(err)
+        })
+    }
+
+    loadMovieData()
+    loadMovieTrailer()
     setLoading(false)
-
-    return () => {
-      console.log('component was disassembled')
-    }
   }, [])
 
   if (loading) return <Loading title="Movie" />
@@ -251,25 +283,25 @@ export function Movie() {
         <img
           className="banner"
           loading="lazy"
-          src={`https://image.tmdb.org/t/p/w1280${movie.backdrop_path}`}
-          alt={movie.original_title}
+          src={`https://image.tmdb.org/t/p/w1280${movieData.backdrop_path}`}
+          alt={movieData.original_title}
           draggable={false}
         />
         <img
           className="poster"
           loading="lazy"
-          src={`https://image.tmdb.org/t/p/w400${movie.poster_path}`}
-          alt={movie.original_title}
+          src={`https://image.tmdb.org/t/p/w400${movieData.poster_path}`}
+          alt={movieData.original_title}
           draggable={false}
         />
       </StyledHeader>
       <StyledSection>
-        <h1>{movie.original_title}</h1>
+        <h1>{movieData.original_title}</h1>
         <div className="info">
           <div className="left">
             <div className="buttons">
               <a
-                href={movie.homepage}
+                href={movieData.homepage}
                 className="official-movie-homepage"
                 target="_blank"
               >
@@ -282,16 +314,16 @@ export function Movie() {
               </a>
             </div>
 
-            <p className="movie-description">{movie.overview}</p>
+            <p className="movie-description">{movieData.overview}</p>
 
-            <div className="video"></div>
+            <VideoPlayer videoKey={movieTrailer[0].key} />
           </div>
           <div className="right">
             <p className="additional-infos">Additional Informations:</p>
             <div className="genres tags">
               <span>Genres:</span>
               <div>
-                {movie.genres?.map((genre) => {
+                {movieData.genres?.map((genre) => {
                   return (
                     <span className="tag" key={genre.id}>
                       <Tag />
@@ -304,7 +336,7 @@ export function Movie() {
             <div className="companies tags">
               <span>Production Companies:</span>
               <div>
-                {movie.production_companies?.map((company) => {
+                {movieData.production_companies?.map((company) => {
                   return (
                     <span className="tag" key={company.id}>
                       <Buildings />
@@ -319,22 +351,24 @@ export function Movie() {
               <div>
                 <span className="tag">
                   <Cake />
-                  {movie.release_date}
+                  {movieData.release_date}
                 </span>
                 <StyledReleasedTag
-                  $released={movie.status === 'Released' ? true : false}
+                  $released={movieData.status === 'Released' ? true : false}
                 >
                   <RocketLaunch />
-                  {movie.status === 'Released' ? 'Released' : 'Not Released'}
+                  {movieData.status === 'Released'
+                    ? 'Released'
+                    : 'Not Released'}
                 </StyledReleasedTag>
               </div>
             </div>
             <div className="restriction tags">
               <span>Age Restriction:</span>
               <div>
-                <StyledRestrictionAge $adultOnly={movie.adult}>
+                <StyledRestrictionAge $adultOnly={movieData.adult}>
                   <Warning />
-                  {movie.adult ? 'Adults only' : 'Free for all'}
+                  {movieData.adult ? 'Adults only' : 'Free for all'}
                 </StyledRestrictionAge>
               </div>
             </div>
