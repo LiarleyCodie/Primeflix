@@ -8,11 +8,11 @@ import { Loading } from './Loading'
 import {
   Buildings,
   Cake,
+  Notebook,
   RocketLaunch,
   Star,
   Tag,
   Warning,
-  YoutubeLogo,
 } from '@phosphor-icons/react'
 
 const StyledHeader = styled.header`
@@ -35,6 +35,16 @@ const StyledHeader = styled.header`
     outline: 0.4rem solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 2rem 3rem -1.5rem rgba(0, 0, 0, 0.75);
     border-radius: 0.8rem;
+    object-fit: cover;
+  }
+
+  @media screen and (max-width: 425px) {
+    img.poster {
+      max-width: 18rem;
+      max-height: 27.2rem;
+      inset: 0;
+      margin: auto;
+    }
   }
 `
 
@@ -70,7 +80,7 @@ const StyledSection = styled.section`
           padding: 1.8rem 2.4rem;
           font-weight: 600;
           text-transform: uppercase;
-          font-size: 1.2rem;
+          font-size: 1.4rem;
           cursor: pointer;
           background: transparent;
           border: 0.1rem solid #12121460;
@@ -83,8 +93,8 @@ const StyledSection = styled.section`
             font-size: 1.8rem;
           }
 
-          &.watch-trailer:hover {
-            background: #ff0000;
+          &.official-movie-homepage:hover {
+            background: rgb(115, 120, 220);
             color: #e1e1e1;
             border-color: transparent;
           }
@@ -97,28 +107,27 @@ const StyledSection = styled.section`
       }
 
       p.movie-description {
-        margin-top: 2rem;
-        font-size: 1.8rem;
+        margin-block: 3.2rem;
+        font-size: 2.4rem;
         line-height: 1.8;
+      }
+
+      .video {
+        background: #d3d3d3;
+        height: 44.8rem;
       }
     }
 
     .right {
       display: flex;
       flex-direction: column;
-      padding-inline: 1.2rem;
+      padding: 1.6rem;
       gap: 1.6rem;
+      border: 1px solid #eeeeee;
+      height: max-content;
 
-      .homepage-link {
-        text-decoration: none;
-        color: rgb(115, 120, 220);
+      .additional-infos {
         font-size: 2rem;
-        text-align: center;
-        font-weight: 600;
-
-        &:hover {
-          text-decoration: underline;
-        }
       }
 
       .tags {
@@ -145,6 +154,34 @@ const StyledSection = styled.section`
 
   @media screen and (max-width: 425px) {
     padding: 2.4rem;
+
+    h1 {
+      font-size: 4.8rem;
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+
+      .left {
+        .buttons {
+          a {
+            display: flex;
+            padding: 1.4rem 2rem;
+
+            & svg {
+              font-size: 3rem;
+            }
+          }
+        }
+
+        .video {
+          background: #d3d3d3;
+          height: 24.4rem;
+        }
+      }
+    }
   }
 `
 
@@ -161,8 +198,8 @@ const StyledReleasedTag = styled.section<{ $released?: boolean }>`
 const StyledRestrictionAge = styled(StyledReleasedTag)<{
   $adultOnly?: boolean
 }>`
-  background: ${(props) => (props.$adultOnly ? '#ff0000' : '#1DB954')};
-  color: ${(props) => (props.$adultOnly ? '#e1e1e1' : '#121214')};
+  background: ${(props) => (props.$adultOnly ? '#ffbb00' : '#1DB954')};
+  color: #121214;
 `
 
 interface IMovie {
@@ -208,8 +245,6 @@ export function Movie() {
 
   if (loading) return <Loading title="Movie" />
 
-  console.log(movie)
-
   return (
     <>
       <StyledHeader>
@@ -233,9 +268,13 @@ export function Movie() {
         <div className="info">
           <div className="left">
             <div className="buttons">
-              <a href="#" className="watch-trailer">
-                <YoutubeLogo weight="fill" />
-                Watch Trailer
+              <a
+                href={movie.homepage}
+                className="official-movie-homepage"
+                target="_blank"
+              >
+                <Notebook weight="fill" />
+                Official Movie Homepage
               </a>
               <a href="#" className="save-favorites">
                 <Star weight="fill" />
@@ -244,11 +283,11 @@ export function Movie() {
             </div>
 
             <p className="movie-description">{movie.overview}</p>
+
+            <div className="video"></div>
           </div>
           <div className="right">
-            <a className="homepage-link" href={movie.homepage} target="_blank">
-              Official Movie Website
-            </a>
+            <p className="additional-infos">Additional Informations:</p>
             <div className="genres tags">
               <span>Genres:</span>
               <div>
