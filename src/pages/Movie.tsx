@@ -5,7 +5,15 @@ import styled from 'styled-components'
 import { API, API_KEY } from '../services/API'
 
 import { Loading } from './Loading'
-import { Star, YoutubeLogo } from '@phosphor-icons/react'
+import {
+  Buildings,
+  Cake,
+  RocketLaunch,
+  Star,
+  Tag,
+  Warning,
+  YoutubeLogo,
+} from '@phosphor-icons/react'
 
 const StyledHeader = styled.header`
   height: 33.2rem;
@@ -38,7 +46,7 @@ const StyledSection = styled.section`
   h1 {
     display: block;
     font-weight: 900;
-    font-size: 4.8rem;
+    font-size: 6rem;
     max-width: 53.2rem;
     line-height: 1.3;
     margin-bottom: 7.2rem;
@@ -55,7 +63,7 @@ const StyledSection = styled.section`
         display: flex;
         gap: 1.2rem;
 
-        button {
+        a {
           display: flex;
           gap: 1.2rem;
           align-items: center;
@@ -68,6 +76,8 @@ const StyledSection = styled.section`
           border: 0.1rem solid #12121460;
           transition-property: color, background, border-color;
           transition-duration: 100ms;
+          text-decoration: none;
+          color: inherit;
 
           & svg {
             font-size: 1.8rem;
@@ -94,13 +104,65 @@ const StyledSection = styled.section`
     }
 
     .right {
-      background: #d3d3d3;
+      display: flex;
+      flex-direction: column;
+      padding-inline: 1.2rem;
+      gap: 1.6rem;
+
+      .homepage-link {
+        text-decoration: none;
+        color: rgb(115, 120, 220);
+        font-size: 2rem;
+        text-align: center;
+        font-weight: 600;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+
+      .tags {
+        display: flex;
+        flex-direction: column;
+        gap: 0.4rem;
+        & > div {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.4rem;
+          .tag {
+            padding: 0.5rem 1.2rem;
+            background: #eeeeee;
+            border-radius: 999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.4rem;
+          }
+        }
+      }
     }
   }
 
   @media screen and (max-width: 425px) {
     padding: 2.4rem;
   }
+`
+
+const StyledReleasedTag = styled.section<{ $released?: boolean }>`
+  padding: 0.5rem 1.2rem;
+  background: ${(props) => (props.$released ? '#1DB954' : '#ff0000')};
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  color: ${(props) => (props.$released ? '#121214' : '#e1e1e1')};
+`
+const StyledRestrictionAge = styled(StyledReleasedTag)<{
+  $adultOnly?: boolean
+}>`
+  background: ${(props) => (props.$adultOnly ? '#ff0000' : '#1DB954')};
+  color: ${(props) => (props.$adultOnly ? '#e1e1e1' : '#121214')};
 `
 
 interface IMovie {
@@ -112,6 +174,7 @@ interface IMovie {
   original_title: string
   overview: string
   poster_path: string
+  production_companies: Array<{ id: number; name: string }>
   release_date: string
   status: string
 }
@@ -170,19 +233,73 @@ export function Movie() {
         <div className="info">
           <div className="left">
             <div className="buttons">
-              <button className="watch-trailer">
+              <a href="#" className="watch-trailer">
                 <YoutubeLogo weight="fill" />
                 Watch Trailer
-              </button>
-              <button className="save-favorites">
+              </a>
+              <a href="#" className="save-favorites">
                 <Star weight="fill" />
-                Save on favorites
-              </button>
+                Save to favorites
+              </a>
             </div>
 
             <p className="movie-description">{movie.overview}</p>
           </div>
-          <div className="right"></div>
+          <div className="right">
+            <a className="homepage-link" href={movie.homepage} target="_blank">
+              Official Movie Website
+            </a>
+            <div className="genres tags">
+              <span>Genres:</span>
+              <div>
+                {movie.genres?.map((genre) => {
+                  return (
+                    <span className="tag" key={genre.id}>
+                      <Tag />
+                      {genre.name}
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+            <div className="companies tags">
+              <span>Production Companies:</span>
+              <div>
+                {movie.production_companies?.map((company) => {
+                  return (
+                    <span className="tag" key={company.id}>
+                      <Buildings />
+                      {company.name}
+                    </span>
+                  )
+                })}
+              </div>
+            </div>
+            <div className="release-date tags">
+              <span>Release date:</span>
+              <div>
+                <span className="tag">
+                  <Cake />
+                  {movie.release_date}
+                </span>
+                <StyledReleasedTag
+                  $released={movie.status === 'Released' ? true : false}
+                >
+                  <RocketLaunch />
+                  {movie.status === 'Released' ? 'Released' : 'Not Released'}
+                </StyledReleasedTag>
+              </div>
+            </div>
+            <div className="restriction tags">
+              <span>Age Restriction:</span>
+              <div>
+                <StyledRestrictionAge $adultOnly={movie.adult}>
+                  <Warning />
+                  {movie.adult ? 'Adults only' : 'Free for all'}
+                </StyledRestrictionAge>
+              </div>
+            </div>
+          </div>
         </div>
       </StyledSection>
     </>
