@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 import { API, API_KEY } from '../services/API'
 
 import { StyledSection } from '../components/DefaultStyledComponents'
 import { MovieCard } from '../components/MovieCard'
-import styled from 'styled-components'
+import { Loading } from './Loading'
 
 interface IMovies {
   adult: boolean
@@ -53,6 +54,7 @@ function DescriptionShortener(description: string): string {
 
 export function Home() {
   const [movies, setMovies] = useState<IMovies[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
     async function loadMovies() {
@@ -63,11 +65,13 @@ export function Home() {
         },
       })
 
-      console.log(movies)
       setMovies(response.data.results.splice(0, 10))
+      setLoading(false)
     }
     loadMovies()
   }, [])
+
+  if (loading) return <Loading title="Movies List" />
 
   return (
     <StyledSection>
