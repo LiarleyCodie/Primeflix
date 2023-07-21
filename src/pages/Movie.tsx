@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { Navigate, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 
@@ -15,6 +15,8 @@ import {
   Warning,
 } from '@phosphor-icons/react'
 import { VideoPlayer } from '../components/VideoPlayer'
+import { SaveToFavorites } from '../components/SaveToFavorites'
+import { RemoveFromFavorites } from '../components/RemoveFromFavorites'
 
 const StyledHeader = styled.header`
   height: 33.2rem;
@@ -91,17 +93,12 @@ const StyledSection = styled.section`
           color: inherit;
 
           & svg {
-            font-size: 1.8rem;
+            font-size: 2.4rem;
           }
 
           &.official-movie-homepage:hover {
             background: rgb(115, 120, 220);
             color: #e1e1e1;
-            border-color: transparent;
-          }
-
-          &.save-favorites:hover {
-            background: #ffd700;
             border-color: transparent;
           }
         }
@@ -212,8 +209,6 @@ interface IMovieTrailer {
   id: string
 }
 
-// https://www.youtube.com/watch?v={movieTrailer.key}
-
 export function Movie() {
   const { movieID } = useParams()
   const [movieData, setMovieData] = useState<IMovieData>({
@@ -238,6 +233,7 @@ export function Movie() {
     },
   ])
   const [loading, setLoading] = useState<boolean>(true)
+  const [movieIsInFavorites, setMovieIsInFavorites] = useState<boolean>(true)
 
   useEffect(() => {
     async function loadMovieData() {
@@ -252,6 +248,7 @@ export function Movie() {
         .catch((err) => {
           console.log('[Movie data was not found]')
           console.error(err)
+          return
         })
     }
 
@@ -273,7 +270,39 @@ export function Movie() {
     loadMovieData()
     loadMovieTrailer()
     setLoading(false)
+
+    return () => movieWasFavorite()
   }, [])
+
+  function favoriteMovie(): void {
+    // prettier-ignore
+    const moviesList: IMovieData[] = JSON.parse(localStorage.getItem('@primeflix_movies') ?? '')
+    moviesList.push(movieData)
+    localStorage.setItem('@primeflix_movies', JSON.stringify(moviesList))
+
+    setMovieIsInFavorites(true)
+  }
+
+  function unfavoriteMovie(): void {
+    // prettier-ignore
+    const savedMoviesList: IMovieData[] = JSON.parse(localStorage.getItem('@primeflix_movies') ?? '')
+
+    const updatedMoviesList = savedMoviesList.filter(
+      (movie) => movie.id !== movieData.id,
+    )
+    localStorage.setItem('@primeflix_movies', JSON.stringify(updatedMoviesList))
+
+    setMovieIsInFavorites(false)
+  }
+
+  function movieWasFavorite() {
+    const savedMoviesList: IMovieData[] = JSON.parse(
+      localStorage.getItem('@primeflix_movies') ?? '',
+    )
+    setMovieIsInFavorites(
+      savedMoviesList.some((movie) => movie.id === Number(movieID)),
+    )
+  }
 
   if (loading) return <Loading title="Movie" />
 
@@ -295,6 +324,7 @@ export function Movie() {
           draggable={false}
         />
       </StyledHeader>
+
       <StyledSection>
         <h1>{movieData.original_title}</h1>
         <div className="info">
@@ -303,15 +333,16 @@ export function Movie() {
               <a
                 href={movieData.homepage}
                 className="official-movie-homepage"
-                target="_blank"
+                target="blank"
               >
                 <Notebook weight="fill" />
                 Official Movie Homepage
               </a>
-              <a href="#" className="save-favorites">
-                <Star weight="fill" />
-                Save to favorites
-              </a>
+              {movieIsInFavorites ? (
+                <RemoveFromFavorites removeFavoritedMovie={unfavoriteMovie} />
+              ) : (
+                <SaveToFavorites favoriteMovie={favoriteMovie} />
+              )}
             </div>
 
             <p className="movie-description">{movieData.overview}</p>

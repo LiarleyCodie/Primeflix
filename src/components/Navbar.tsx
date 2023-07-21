@@ -27,11 +27,12 @@ const StyledNavbar = styled.nav`
     &:nth-child(2) {
       display: block;
       color: inherit;
-      width: 12rem;
+      width: 18rem;
       text-align: center;
       padding-block: 0.8rem;
       transition: opacity 100ms;
       overflow: hidden;
+      text-transform: uppercase;
 
       &::after {
         content: '';
@@ -66,7 +67,7 @@ export function Navbar() {
       <Link to="/">
         Prime<strong>Flix</strong>
       </Link>
-      <NavLink to="/bookmarks">My Movies</NavLink>
+      <NavLink to="/bookmarks">My Favorite Movies</NavLink>
     </StyledNavbar>
   )
 }
