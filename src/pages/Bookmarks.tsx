@@ -33,18 +33,24 @@ export function Bookmarks() {
   return (
     <StyledSection>
       <StyledMoviesList>
-        {movies.map((movie) => {
-          return (
-            <MovieCard
-              key={movie.id}
-              title={movie.title}
-              description={DescriptionShortener(movie.overview)}
-              imageUrl={movie.poster_path}
-              imageAlt={movie.original_title}
-              readMoreLinkID={movie.id}
-            />
-          )
-        })}
+        {movies.length ? (
+          movies.map((movie) => {
+            return (
+              <MovieCard
+                key={movie.id}
+                title={movie.title}
+                description={DescriptionShortener(movie.overview)}
+                imageUrl={movie.poster_path}
+                imageAlt={movie.original_title}
+                readMoreLinkID={movie.id}
+              />
+            )
+          })
+        ) : (
+          <h1 style={{ margin: 'auto' }}>
+            Hey you haven't save any movies yet! 😥
+          </h1>
+        )}
       </StyledMoviesList>
     </StyledSection>
   )

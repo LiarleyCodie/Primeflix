@@ -1,6 +1,7 @@
-import { Navigate, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
+import { toast } from 'react-toastify'
 
 import { API, API_KEY } from '../services/API'
 
@@ -281,6 +282,7 @@ export function Movie() {
     localStorage.setItem('@primeflix_movies', JSON.stringify(moviesList))
 
     setMovieIsInFavorites(true)
+    toast.success('Movie added to your favorites')
   }
 
   function unfavoriteMovie(): void {
@@ -293,6 +295,7 @@ export function Movie() {
     localStorage.setItem('@primeflix_movies', JSON.stringify(updatedMoviesList))
 
     setMovieIsInFavorites(false)
+    toast.warning('Movie removed from your favorites')
   }
 
   function movieWasFavorite() {
