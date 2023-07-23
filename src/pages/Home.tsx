@@ -21,8 +21,9 @@ export interface IMovies {
 export const StyledMoviesList = styled.div`
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-between;
   gap: 1.2rem;
+  max-width: 85.2rem;
+  margin-inline: auto;
 
   @media screen and (max-width: 425px) {
     flex-wrap: nowrap;

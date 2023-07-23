@@ -27,9 +27,9 @@ const StyledNavbar = styled.nav`
     &:nth-child(2) {
       display: block;
       color: inherit;
-      width: 18rem;
       text-align: center;
       padding-block: 0.8rem;
+      padding-inline: 1.2rem;
       transition: opacity 100ms;
       overflow: hidden;
       text-transform: uppercase;
@@ -59,6 +59,10 @@ const StyledNavbar = styled.nav`
       }
     }
   }
+
+  @media screen and (max-width: 425px) {
+    padding: 1.2rem 2rem;
+  }
 `
 
 export function Navbar() {
@@ -67,7 +71,7 @@ export function Navbar() {
       <Link to="/">
         Prime<strong>Flix</strong>
       </Link>
-      <NavLink to="/bookmarks">My Favorite Movies</NavLink>
+      <NavLink to="/bookmarks">Favorites</NavLink>
     </StyledNavbar>
   )
 }

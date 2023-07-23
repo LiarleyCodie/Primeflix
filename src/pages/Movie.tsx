@@ -11,13 +11,14 @@ import {
   Cake,
   Notebook,
   RocketLaunch,
-  Star,
   Tag,
   Warning,
 } from '@phosphor-icons/react'
 import { VideoPlayer } from '../components/VideoPlayer'
 import { SaveToFavorites } from '../components/SaveToFavorites'
 import { RemoveFromFavorites } from '../components/RemoveFromFavorites'
+
+// TODO: fix MovieWasFavorite() function
 
 const StyledHeader = styled.header`
   height: 33.2rem;
@@ -140,6 +141,7 @@ const StyledSection = styled.section`
             align-items: center;
             justify-content: center;
             gap: 0.4rem;
+            width: max-content;
           }
         }
       }
@@ -272,7 +274,7 @@ export function Movie() {
     loadMovieTrailer()
     setLoading(false)
 
-    return () => movieWasFavorite()
+    // return () => movieWasFavorite()
   }, [])
 
   function favoriteMovie(): void {
