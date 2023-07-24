@@ -21,10 +21,9 @@ export function Bookmarks() {
   const [loading, setLoading] = useState<boolean>(true)
 
   useEffect(() => {
-    // prettier-ignore
-    // TODO fix this statement, it are breaking all
-    // const myList: IMovies[] = JSON.parse(localStorage.getItem('@primeflix_movies') ?? '')
-    // setMovies(myList)
+    const myList: IMovies[] =
+      JSON.parse(localStorage.getItem('@primeflix_movies')) || []
+    setMovies(myList)
 
     setLoading(false)
   }, [])

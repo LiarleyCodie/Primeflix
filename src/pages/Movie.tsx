@@ -236,7 +236,7 @@ export function Movie() {
     },
   ])
   const [loading, setLoading] = useState<boolean>(true)
-  const [movieIsInFavorites, setMovieIsInFavorites] = useState<boolean>(true)
+  const [movieIsInFavorites, setMovieIsInFavorites] = useState<boolean>(false)
 
   useEffect(() => {
     async function loadMovieData() {
@@ -274,12 +274,12 @@ export function Movie() {
     loadMovieTrailer()
     setLoading(false)
 
-    // return () => movieWasFavorite()
+    return () => movieWasFavorite()
   }, [])
 
   function favoriteMovie(): void {
     // prettier-ignore
-    const moviesList: IMovieData[] = JSON.parse(localStorage.getItem('@primeflix_movies') ?? '')
+    const moviesList: IMovieData[] = JSON.parse(localStorage.getItem('@primeflix_movies')) || []
     moviesList.push(movieData)
     localStorage.setItem('@primeflix_movies', JSON.stringify(moviesList))
 
@@ -297,16 +297,18 @@ export function Movie() {
     localStorage.setItem('@primeflix_movies', JSON.stringify(updatedMoviesList))
 
     setMovieIsInFavorites(false)
-    toast.warning('Movie removed from your favorites')
+    toast.success('Movie removed from your favorites')
   }
 
   function movieWasFavorite() {
-    const savedMoviesList: IMovieData[] = JSON.parse(
-      localStorage.getItem('@primeflix_movies') ?? '',
+    const savedMoviesList: IMovieData[] | null = JSON.parse(
+      localStorage.getItem('@primeflix_movies'),
     )
-    setMovieIsInFavorites(
-      savedMoviesList.some((movie) => movie.id === Number(movieID)),
-    )
+    if (savedMoviesList) {
+      setMovieIsInFavorites(
+        savedMoviesList.some((movie) => movie.id === Number(movieID)),
+      )
+    }
   }
 
   if (loading) return <Loading title="Movie" />
