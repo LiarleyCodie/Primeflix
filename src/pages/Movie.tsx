@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import styled from 'styled-components'
 import { toast } from 'react-toastify'
+import { Parallax, Background } from 'react-parallax'
+import styled from 'styled-components'
 
 import { API, API_KEY } from '../services/API'
 
@@ -18,17 +19,15 @@ import { VideoPlayer } from '../components/VideoPlayer'
 import { SaveToFavorites } from '../components/SaveToFavorites'
 import { RemoveFromFavorites } from '../components/RemoveFromFavorites'
 
-// TODO: fix MovieWasFavorite() function
-
 const StyledHeader = styled.header`
-  height: 33.2rem;
+  height: 61.6rem;
   background: #d3d3d3;
   position: relative;
 
-  img.banner {
+  .banner {
+    width: 100%;
     height: 100%;
     object-fit: cover;
-    filter: grayscale(100%);
   }
 
   img.poster {
@@ -52,7 +51,7 @@ const StyledHeader = styled.header`
     }
   }
 `
-
+//#region
 const StyledSection = styled.section`
   padding: 8.4rem 14rem 32rem;
   margin: auto;
@@ -210,9 +209,11 @@ interface IMovieTrailer {
   key: string
   site: string
   id: string
+  type: string
 }
-
+//#endregion
 export function Movie() {
+  //#region
   const { movieID } = useParams()
   const [movieData, setMovieData] = useState<IMovieData>({
     adult: false,
@@ -233,6 +234,7 @@ export function Movie() {
       key: '',
       site: '',
       name: '',
+      type: '',
     },
   ])
   const [loading, setLoading] = useState<boolean>(true)
@@ -277,8 +279,20 @@ export function Movie() {
     return () => movieWasFavorite()
   }, [])
 
+  function getMovieTrailerID(movies: IMovieTrailer[]): number {
+    let movieID: number = 0
+    for (let i = 0; i < movies.length; i++) {
+      if (movies[i].type?.toUpperCase() === 'TRAILER') {
+        movieID = i
+        break
+      }
+    }
+    return movieID
+  }
+
   function favoriteMovie(): void {
     // prettier-ignore
+    // @ts-ignore
     const moviesList: IMovieData[] = JSON.parse(localStorage.getItem('@primeflix_movies')) || []
     moviesList.push(movieData)
     localStorage.setItem('@primeflix_movies', JSON.stringify(moviesList))
@@ -301,9 +315,9 @@ export function Movie() {
   }
 
   function movieWasFavorite() {
-    const savedMoviesList: IMovieData[] | null = JSON.parse(
-      localStorage.getItem('@primeflix_movies'),
-    )
+    // @ts-ignore
+    // prettier-ignore
+    const savedMoviesList: IMovieData[] | null = JSON.parse(localStorage.getItem('@primeflix_movies'))
     if (savedMoviesList) {
       setMovieIsInFavorites(
         savedMoviesList.some((movie) => movie.id === Number(movieID)),
@@ -312,7 +326,7 @@ export function Movie() {
   }
 
   if (loading) return <Loading title="Movie" />
-
+  //#endregion
   return (
     <>
       <StyledHeader>
@@ -354,7 +368,11 @@ export function Movie() {
 
             <p className="movie-description">{movieData.overview}</p>
 
-            <VideoPlayer videoKey={movieTrailer[0].key} />
+            {!loading && (
+              <VideoPlayer
+                videoKey={movieTrailer[getMovieTrailerID(movieTrailer)].key}
+              />
+            )}
           </div>
           <div className="right">
             <p className="additional-infos">Additional Informations:</p>
