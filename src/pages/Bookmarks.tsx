@@ -22,6 +22,7 @@ export function Bookmarks() {
 
   useEffect(() => {
     const myList: IMovies[] =
+      // @ts-ignore
       JSON.parse(localStorage.getItem('@primeflix_movies')) || []
     setMovies(myList)
 
