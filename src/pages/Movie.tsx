@@ -1,20 +1,12 @@
 import { useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
-import { Parallax, Background } from 'react-parallax'
 import styled from 'styled-components'
 
 import { API, API_KEY } from '../services/API'
 
 import { Loading } from './Loading'
-import {
-  Buildings,
-  Cake,
-  Notebook,
-  RocketLaunch,
-  Tag,
-  Warning,
-} from '@phosphor-icons/react'
+import { Buildings, Cake, Notebook, RocketLaunch, Tag, Warning } from '@phosphor-icons/react' // prettier-ignore
 import { VideoPlayer } from '../components/VideoPlayer'
 import { SaveToFavorites } from '../components/SaveToFavorites'
 import { RemoveFromFavorites } from '../components/RemoveFromFavorites'
@@ -43,6 +35,8 @@ const StyledHeader = styled.header`
   }
 
   @media screen and (max-width: 425px) {
+    height: 42.8rem;
+
     img.poster {
       max-width: 18rem;
       max-height: 27.2rem;
@@ -63,7 +57,7 @@ const StyledSection = styled.section`
     font-size: 6rem;
     max-width: 53.2rem;
     line-height: 1.3;
-    margin-bottom: 7.2rem;
+    margin-bottom: 3.2rem;
   }
 
   .info {
@@ -148,10 +142,11 @@ const StyledSection = styled.section`
   }
 
   @media screen and (max-width: 425px) {
-    padding: 2.4rem;
+    padding: 3.2rem 2.4rem;
 
     h1 {
       font-size: 4.8rem;
+      text-align: center;
     }
 
     .info {
@@ -161,14 +156,34 @@ const StyledSection = styled.section`
 
       .left {
         .buttons {
-          a {
+          flex-direction: column;
+
+          a,
+          button {
             display: flex;
             padding: 1.4rem 2rem;
-
+            font-size: 1.2rem;
             & svg {
               font-size: 3rem;
             }
+
+            & span {
+              font-weight: 600;
+              margin-inline: auto;
+            }
           }
+        }
+
+        p.movie-description {
+          font-size: 1.6rem;
+          line-height: 1.8;
+        }
+      }
+
+      .right {
+        .additional-infos {
+          font-size: 1.8rem;
+          font-weight: 600;
         }
       }
     }
@@ -357,7 +372,7 @@ export function Movie() {
                 target="blank"
               >
                 <Notebook weight="fill" />
-                Official Movie Homepage
+                <span>Official Movie Homepage</span>
               </a>
               {movieIsInFavorites ? (
                 <RemoveFromFavorites removeFavoritedMovie={unfavoriteMovie} />

@@ -32,7 +32,9 @@ export function SaveToFavorites({favoriteMovie}: {favoriteMovie: () => void}) {
   return (
     <StyledButton onClick={favoriteMovie}>
       <Star weight="fill" />
-      Save to favorites
+      <span>
+        Save to favorites
+      </span>
     </StyledButton>
   )
 }

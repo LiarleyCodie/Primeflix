@@ -33,7 +33,9 @@ export function RemoveFromFavorites({removeFavoritedMovie}: {removeFavoritedMovi
   return (
     <StyledButton onClick={removeFavoritedMovie}>
       <X />
-      Remove from Favorites
+      <span>
+        Remove from Favorites
+      </span>
     </StyledButton>
   )
 }
